@@ -41,21 +41,25 @@ int main(int argc, char* argv[])
                 X[0] = Au[0][1] / Au[0][0];
         else{
             /*Gaussian elimination*/
+            // this is a section
             # pragma omp parallel for num_threads(thread_count) \
             default(none) shared(Au, size) private(i, k, j)
                 for (k = 0; k < size - 1; ++k) {
                         /*Pivoting*/
+                        // Add section here
                         temp = 0;
-                        for (i = k, j = 0; i < size; ++i)
+                        for (i = k, j = 0; i < size; ++i) {
                                 if (temp < Au[index[i]][k] * Au[index[i]][k]) {
                                         temp = Au[index[i]][k] * Au[index[i]][k];
                                         j = i;
                                 }
+                        }
                         if (j != k) /*swap*/ {
                                 i = index[j];
                                 index[j] = index[k];
                                 index[k] = i;
                         }
+                        // Add section here
                         /*calculating*/
                         for (i = k + 1; i < size; ++i) {
                                 temp = Au[index[i]][k] / Au[index[k]][k];
@@ -63,6 +67,7 @@ int main(int argc, char* argv[])
                                         Au[index[i]][j] -= Au[index[k]][j] * temp;
                         }
                 }
+                // this is a section
                 /*Jordan elimination*/
                 for (k = size - 1; k > 0; --k) {
                         for (i = k - 1; i >= 0; --i ) {
