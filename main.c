@@ -30,9 +30,11 @@ int main(int argc, char* argv[])
         /*Calculate the solution by serial code*/
         X = CreateVec(size);
         index = malloc(size * sizeof(int));
-        for (i = 0; i < size; ++i)
-                index[i] = i;
+        for (i = 0; i < size; ++i) {
+            index[i] = i;
+        }
 
+        GET_TIME(start);
         if (size == 1)
                 X[0] = Au[0][1] / Au[0][0];
         else{
@@ -69,8 +71,9 @@ int main(int argc, char* argv[])
                 for (k=0; k< size; ++k)
                         X[k] = Au[index[k]][size] / Au[index[k]][k];
         }
-
-        Lab3SaveOutput(X, size, 2.3434);
+        GET_TIME(end);
+        printf("Time elapsed: %f seconds.", end - start);
+        Lab3SaveOutput(X, size, end - start);
 
         DestroyVec(X);
         DestroyMat(Au, size);
