@@ -25,7 +25,7 @@ int main(int argc, char* argv[])
         double start, end, elapsed;
         int* index;
         FILE* fp;
-        int num_threads = atoi(argv[1]);
+        int thread_count = atoi(argv[1]);
 
         /*Load the datasize and verify it*/
         Lab3LoadInput(&Au, &size);
@@ -64,7 +64,7 @@ int main(int argc, char* argv[])
                         }
                         // Add section here
                         /*calculating*/
-                        #pragma omp for collapse(2)
+                        // #pragma omp for collapse(2)
                         for (i = k + 1; i < size; ++i) {
                                 for (j = k; j < size + 1; ++j)
                                         temp = Au[index[i]][k] / Au[index[k]][k];
