@@ -44,8 +44,6 @@ int main(int argc, char* argv[])
         X[0] = Au[0][1] / Au[0][0];
     else{
         /*Gaussian elimination*/
-        # pragma omp parallel for num_threads(thread_count) \
-            default(none) shared(Au, size) private(i, k, j)
         for (k = 0; k < size - 1; ++k){
             /*Pivoting*/
             temp = 0;

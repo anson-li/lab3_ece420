@@ -10,6 +10,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+#include <omp.h>
 #include "timer.h"
 #include "Lab3IO.h"
 
@@ -24,6 +25,7 @@ int main(int argc, char* argv[])
         double start, end, elapsed;
         int* index;
         FILE* fp;
+        int num_threads = atoi(argv[1]);
 
         /*Load the datasize and verify it*/
         Lab3LoadInput(&Au, &size);
@@ -38,7 +40,9 @@ int main(int argc, char* argv[])
         if (size == 1)
                 X[0] = Au[0][1] / Au[0][0];
         else{
-                /*Gaussian elimination*/
+            /*Gaussian elimination*/
+            # pragma omp parallel for num_threads(thread_count) \
+            default(none) shared(Au, size) private(i, k, j)
                 for (k = 0; k < size - 1; ++k) {
                         /*Pivoting*/
                         temp = 0;
@@ -72,7 +76,7 @@ int main(int argc, char* argv[])
                         X[k] = Au[index[k]][size] / Au[index[k]][k];
         }
         GET_TIME(end);
-        printf("Time elapsed: %f seconds.", end - start);
+        printf("Time elapsed: %f seconds. \n", end - start);
         Lab3SaveOutput(X, size, end - start);
 
         DestroyVec(X);
