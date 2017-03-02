@@ -1,5 +1,5 @@
-Remember to change the exit value of the wrong case to -1 !!!
 /*
+Remember to change the exit value of the wrong case to -1 !!!
 Test the result stored in the "data_output" by a serial version of calculation
 
 -----

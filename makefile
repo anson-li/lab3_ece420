@@ -8,26 +8,23 @@ LIBS = -lpthread -lm
 ###
 # Setting default make
 ###
-default: datagen lab3io serialtester main
-all: datagen lab3io serialtester main
+default: datagen serialtester main
+all: datagen serialtester main
 
 ###
 # Support
 ###
 datagen:
-	$(CC) -o datagen datagen.c
-
-lab3io:
-	$(CC) -o lab3IO lab3IO.c
+	$(CC) -o datagen datagen.c Lab3IO.c
 
 serialtester:
-	$(CC) -o serialtester serialtester.c
+	$(CC) -o serialtester serialtester.c Lab3IO.c -lm
 
 main:
-	$(CC) -g -o main main.c
+	$(CC) -g -o main main.c Lab3IO.c
 
 ###
 # Clean process
 ###
 clean:
-	rm -f datagen lab3IO serialtester main
+	rm -f datagen serialtester main
