@@ -42,8 +42,10 @@ int main(int argc, char* argv[])
         else{
             /*Gaussian elimination*/
             // this is a section
-            # pragma omp parallel for num_threads(thread_count) \
-            default(none) shared(Au, size) private(i, k, j)
+            # pragma omp parallel num_threads(thread_count) \
+            default(none) shared(X, Au, size, index) private(i, k, j, temp)
+
+                #pragma omp for ordered
                 for (k = 0; k < size - 1; ++k) {
                         /*Pivoting*/
                         // Add section here
@@ -54,6 +56,7 @@ int main(int argc, char* argv[])
                                         j = i;
                                 }
                         }
+
                         if (j != k) /*swap*/ {
                                 i = index[j];
                                 index[j] = index[k];
@@ -61,14 +64,17 @@ int main(int argc, char* argv[])
                         }
                         // Add section here
                         /*calculating*/
+                        #pragma omp for collapse(2)
                         for (i = k + 1; i < size; ++i) {
-                                temp = Au[index[i]][k] / Au[index[k]][k];
                                 for (j = k; j < size + 1; ++j)
+                                        temp = Au[index[i]][k] / Au[index[k]][k];
                                         Au[index[i]][j] -= Au[index[k]][j] * temp;
                         }
                 }
                 // this is a section
                 /*Jordan elimination*/
+
+                # pragma omp for collapse(2)
                 for (k = size - 1; k > 0; --k) {
                         for (i = k - 1; i >= 0; --i ) {
                                 temp = Au[index[i]][k] / Au[index[k]][k];
@@ -76,7 +82,9 @@ int main(int argc, char* argv[])
                                 Au[index[i]][size] -= temp * Au[index[k]][size];
                         }
                 }
+
                 /*solution*/
+                # pragma omp for
                 for (k=0; k< size; ++k)
                         X[k] = Au[index[k]][size] / Au[index[k]][k];
         }
