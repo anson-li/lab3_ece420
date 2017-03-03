@@ -65,6 +65,8 @@ int main(int argc, char* argv[])
                         /*calculating*/
                         // #pragma omp for collapse(2)
                         // launch threads here & join
+                        # pragma omp parallel for num_threads(thread_count) \
+                        default(none) shared(X, Au, size, index, k) private(i, j, temp)
                         for (i = k + 1; i < size; ++i) {
                             temp = Au[index[i]][k] / Au[index[k]][k];
                                 for (j = k; j < size + 1; ++j)
@@ -85,7 +87,8 @@ int main(int argc, char* argv[])
                 }
 
                 /*solution*/
-                # pragma omp for
+                # pragma omp parallel for num_threads(thread_count) \
+            default(none) shared(X, Au, size, index) private(k)
                 for (k=0; k< size; ++k)
                         X[k] = Au[index[k]][size] / Au[index[k]][k];
         }
