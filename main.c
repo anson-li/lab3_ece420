@@ -25,7 +25,7 @@ int main(int argc, char* argv[])
         double start, end, elapsed;
         int* index;
         FILE* fp;
-        int num_threads = atoi(argv[1]);
+        int thread_count = atoi(argv[1]);
 
         /*Load the datasize and verify it*/
         Lab3LoadInput(&Au, &size);
@@ -42,8 +42,9 @@ int main(int argc, char* argv[])
         else{
             /*Gaussian elimination*/
             // this is a section
-            # pragma omp parallel for num_threads(thread_count) \
-            default(none) shared(Au, size) private(i, k, j)
+                //#pragma omp for ordered
+                // CANNOT BE PARALELLIZED
+                // MUST BE ORDERED - SEQUENTIAL
                 for (k = 0; k < size - 1; ++k) {
                         /*Pivoting*/
                         // Add section here
@@ -54,29 +55,33 @@ int main(int argc, char* argv[])
                                         j = i;
                                 }
                         }
+
                         if (j != k) /*swap*/ {
                                 i = index[j];
                                 index[j] = index[k];
                                 index[k] = i;
                         }
-                        // Add section here
-                        /*calculating*/
+                        # pragma omp parallel for num_threads(thread_count) \
+                        default(none) shared(X, Au, size, index, k) private(i, j, temp) schedule (static, 10)
                         for (i = k + 1; i < size; ++i) {
-                                temp = Au[index[i]][k] / Au[index[k]][k];
+                            temp = Au[index[i]][k] / Au[index[k]][k];
                                 for (j = k; j < size + 1; ++j)
                                         Au[index[i]][j] -= Au[index[k]][j] * temp;
                         }
+                        // end pragma
                 }
-                // this is a section
                 /*Jordan elimination*/
                 for (k = size - 1; k > 0; --k) {
-                        for (i = k - 1; i >= 0; --i ) {
-                                temp = Au[index[i]][k] / Au[index[k]][k];
-                                Au[index[i]][k] -= temp * Au[index[k]][k];
-                                Au[index[i]][size] -= temp * Au[index[k]][size];
+                        for (i = k - 1; i >= 0; --i ) { 
+                            temp = Au[index[i]][k] / Au[index[k]][k];
+                            Au[index[i]][k] -= temp * Au[index[k]][k];
+                            Au[index[i]][size] -= temp * Au[index[k]][size];
                         }
                 }
+
                 /*solution*/
+                # pragma omp parallel for num_threads(thread_count) \
+                default(none) shared(X, Au, size, index) private(k) schedule (static, 10)
                 for (k=0; k< size; ++k)
                         X[k] = Au[index[k]][size] / Au[index[k]][k];
         }
