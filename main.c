@@ -61,10 +61,6 @@ int main(int argc, char* argv[])
                                 index[j] = index[k];
                                 index[k] = i;
                         }
-                        // Add section here
-                        /*calculating*/
-                        // #pragma omp for collapse(2)
-                        // launch threads here & join
                         # pragma omp parallel for num_threads(thread_count) \
                         default(none) shared(X, Au, size, index, k) private(i, j, temp)
                         for (i = k + 1; i < size; ++i) {
@@ -74,10 +70,7 @@ int main(int argc, char* argv[])
                         }
                         // end pragma
                 }
-                // this is a section
                 /*Jordan elimination*/
-                // CANNOT BE PARALLELIZED
-                // MUST BE ORDERED - SEQUENTIAL
                 for (k = size - 1; k > 0; --k) {
                         for (i = k - 1; i >= 0; --i ) { 
                             temp = Au[index[i]][k] / Au[index[k]][k];
@@ -88,7 +81,7 @@ int main(int argc, char* argv[])
 
                 /*solution*/
                 # pragma omp parallel for num_threads(thread_count) \
-            default(none) shared(X, Au, size, index) private(k)
+                default(none) shared(X, Au, size, index) private(k)
                 for (k=0; k< size; ++k)
                         X[k] = Au[index[k]][size] / Au[index[k]][k];
         }

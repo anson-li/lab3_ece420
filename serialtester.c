@@ -80,7 +80,7 @@ int main(int argc, char* argv[])
     }
 
     GET_TIME(end);
-        printf("Time elapsed: %f seconds. \n", end - start);
+    printf("Time elapsed: %f seconds. \n", end - start);
 
 	/*compare the solution*/
 	error = 0;
