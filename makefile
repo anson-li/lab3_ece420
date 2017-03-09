@@ -21,7 +21,7 @@ serialtester:
 	$(CC) -o serialtester serialtester.c Lab3IO.c -lm
 
 main:
-	clang-omp -fopenmp main.c Lab3IO.c -ggdb
+	gcc -fopenmp main.c Lab3IO.c -ggdb
 
 ###
 # Clean process
